@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Trending Topics</title>
+    <script>
+        async function fetchTrends() {
+            const response = await fetch('/get_trends');
+            const data = await response.json();
+            console.log(data);
+
+            if (data) {
+                const timestamp = new Date(data.timestamp);
+                document.getElementById('results').innerHTML = `
+                    <h3>These are the most happening topics as on ${timestamp.toLocaleDateString()}:</h3>
+                    <ul>
+                        ${data.topics.map((topic, index) => `<li>Name of trend${index + 1}: ${topic}</li>`).join('')}
+                    </ul>
+                    <p><strong>The IP address used for this query was:</strong>${data.ip_address}</p>
+                    <h4>Here’s a JSON extract of this record from the MongoDB:</h4>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } else {
+                document.getElementById('results').innerHTML = `
+                    <p>Loading</p>
+                `;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Welcome to Twitter Trends</h1>
+    <button onclick="fetchTrends()">Click here to run the script</button>
+    <div id="results"></div>
+</body>
+</html>
